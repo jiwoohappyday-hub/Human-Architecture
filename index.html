@@ -1,4 +1,4 @@
-ㅍ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -42,10 +42,12 @@
 
     <!-- 4-1. 제목용 머니그라피 폰트 & 배경 블러/레이아웃 보정 -->
     <style>
-        /* 머니그라피 웹폰트 (제목용) */
+        /* 머니그라피 웹폰트 (제목용)
+           └ index.html 과 같은 레벨에 "Moneygraphy Font/WOFF EOT/Moneygraphy-R.woff2"
+           폴더/파일 구조가 있다고 가정한 상대 경로입니다. */
         @font-face {
             font-family: 'Moneygraphy';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304@1.0/Moneygraphy-R.woff2') format('woff2');
+            src: url('./Moneygraphy Font/WOFF EOT/Moneygraphy-R.woff2') format('woff2');
             font-weight: normal;
             font-style: normal;
         }
