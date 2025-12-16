@@ -6,6 +6,8 @@
     <title>Human Architecture</title>
     
     <!-- 1. 폰트 로드 -->
+    <!-- 프리텐다드 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -25,11 +27,18 @@
                     animation: {
                         'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'progress': 'progress 3s ease-in-out forwards',
+                        'dots': 'dots 1.5s steps(4, end) infinite',
                     },
                     keyframes: {
                         progress: {
                             '0%': { width: '0%' },
                             '100%': { width: '100%' },
+                        },
+                        dots: {
+                            '0%, 20%': { content: '".' },
+                            '40%': { content: '"..' },
+                            '60%': { content: '"...' },
+                            '80%, 100%': { content: '""' },
                         }
                     }
                 }
@@ -38,14 +47,16 @@
     </script>
 
     <!-- 4. 커스텀 CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
 
     <!-- 4-1. 제목용 머니그라피 폰트 & 배경 블러/레이아웃 보정 -->
     <style>
-        /* 머니그라피 웹폰트 (제목용) - jsDelivr(CDN) 사용 */
+        /* 머니그라피 웹폰트 (제목용) - index22.html과 동일한 방식 */
         @font-face {
             font-family: 'Moneygraphy';
-            src: url('https://cdn.jsdelivr.net/gh/jiwoohappyday-hub/Human-Architecture@main/Moneygraphy%20Font/WOFF%20EOT/Moneygraphy-R.woff2') format('woff2');
+            src: url('./Moneygraphy Font/WOFF EOT/Moneygraphy-Rounded.woff2') format('woff2'),
+                 url('./Moneygraphy Font/WOFF EOT/Moneygraphy-Rounded.woff') format('woff'),
+                 url('./Moneygraphy Font/TTF/Moneygraphy-Rounded.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
@@ -55,13 +66,29 @@
         h1, h2, h3,
         .font-serif,
         .heading-font {
-            font-family: 'Moneygraphy', 'Noto Serif KR', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Moneygraphy', 'Noto Serif KR', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             letter-spacing: 0.08em;
+        }
+        
+        /* 첫 페이지 큰 제목 확실하게 적용 */
+        #page-home h1,
+        #page-home .heading-font {
+            font-family: 'Moneygraphy', sans-serif !important;
+        }
+
+        /* 두 번째 페이지 본문 텍스트 - 프리텐다드 레귤러, 검정색 */
+        #page-started p,
+        #page-started .text-gray-500,
+        #page-started .text-gray-700 {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+            font-weight: 400 !important;
+            color: #000000 !important;
         }
 
         body {
             position: relative;
             background-color: #f8f9fa;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
         }
         body::before {
             content: '';
@@ -86,6 +113,19 @@
             min-height: 100vh;
             padding-top: 96px;
             padding-bottom: 64px;
+        }
+
+        /* 점이 반복되는 애니메이션 (GPT 스타일) */
+        @keyframes dots {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(1, end) infinite;
+            display: inline-block;
         }
     </style>
 </head>
@@ -145,9 +185,9 @@
             <button onclick="window.showPage('home')" class="border border-gray-300 bg-white px-6 py-2 hover:bg-gray-50 text-sm font-bold tracking-wide transition-colors cursor-pointer">← 종료</button>
         </nav>
         
-        <div class="flex-1 flex flex-col items-center justify-center mt-2 pb-6 w-full max-w-7xl mx-auto px-6 min-h-[calc(100vh-120px)]">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center leading-normal">
-                <span class="border-b-4 border-gray-200 pb-2">설계할 시나리오를 선택하십시오</span>
+        <div class="flex-1 flex flex-col items-center justify-center -mt-8 pb-6 w-full max-w-7xl mx-auto px-6 min-h-[calc(100vh-120px)]">
+            <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center leading-normal">
+                <span>설계할 시나리오를 선택하십시오</span>
             </h2>
             <p id="result-message" class="text-sm md:text-base text-gray-700 mb-10 text-center hidden">
                 계원예술대학교 합격 리스트 완료하였습니다.
@@ -157,8 +197,8 @@
                 <!-- 카드 1 (클릭 가능) -->
                 <button onclick="window.startScenario()" class="flex flex-col items-start p-8 bg-white border border-gray-900 shadow-[6px_6px_0px_0px_#1a1a1a] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-200 text-left h-72 justify-between group w-full cursor-pointer">
                     <div class="w-full">
-                        <span class="text-xs font-bold text-blue-600 mb-2 block tracking-widest">RECOMMENDED</span>
-                        <h3 class="text-2xl font-bold mb-3 group-hover:underline decoration-2 underline-offset-4">01. 대학교 합격</h3>
+                        <span class="text-xs font-bold text-blue-600 mb-2 block tracking-widest">Dream</span>
+                        <h3 class="text-2xl font-bold mb-3">01. 대학교 합격</h3>
                         <p class="text-gray-500 text-sm leading-relaxed">입시 성공을 위한 최적화 프로세스 및 합격률 분석 데이터.</p>
                     </div>
                     <div class="w-full flex justify-between items-end border-t border-gray-100 pt-4 mt-4">
@@ -167,31 +207,31 @@
                     </div>
                 </button>
 
-                <!-- 카드 2 (비활성) -->
-                <div class="flex flex-col items-start p-8 bg-white border border-gray-200 text-left h-72 justify-between w-full opacity-60">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 mb-2 block tracking-widest">LOCKED</span>
+                <!-- 카드 2 (클릭 가능) -->
+                <button onclick="window.startScenario('love')" class="flex flex-col items-start p-8 bg-white border border-gray-900 shadow-[6px_6px_0px_0px_#1a1a1a] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-200 text-left h-72 justify-between group w-full cursor-pointer">
+                    <div class="w-full">
+                        <span class="text-xs font-bold text-blue-600 mb-2 block tracking-widest">Experience</span>
                         <h3 class="text-2xl font-bold mb-3">02. 사랑의 시작</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed">감정 데이터 분석 및 최적의 파트너 매칭 알고리즘.</p>
+                        <p class="text-gray-500 text-sm leading-relaxed">준비중 입니다 (영상 업데이트 예정).</p>
                     </div>
                     <div class="w-full flex justify-between items-end border-t border-gray-100 pt-4 mt-4">
                         <span class="text-xs text-gray-400 font-mono">CODE: LOVE_02</span>
-                        <span class="text-sm font-bold">LOCKED</span>
+                        <span class="text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">ENTER →</span>
                     </div>
-                </div>
+                </button>
 
-                <!-- 카드 3 (비활성) -->
-                <div class="flex flex-col items-start p-8 bg-white border border-gray-200 text-left h-72 justify-between w-full opacity-60">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 mb-2 block tracking-widest">LOCKED</span>
+                <!-- 카드 3 (클릭 가능) -->
+                <button onclick="window.startScenario('shop')" class="flex flex-col items-start p-8 bg-white border border-gray-900 shadow-[6px_6px_0px_0px_#1a1a1a] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-200 text-left h-72 justify-between group w-full cursor-pointer">
+                    <div class="w-full">
+                        <span class="text-xs font-bold text-blue-600 mb-2 block tracking-widest">Experience</span>
                         <h3 class="text-2xl font-bold mb-3">03. 쇼핑 & 소유</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed">물질적 만족도 극대화 설계 및 자산 관리 시뮬레이션.</p>
+                        <p class="text-gray-500 text-sm leading-relaxed">준비중 입니다 (영상 업데이트 예정).</p>
                     </div>
                     <div class="w-full flex justify-between items-end border-t border-gray-100 pt-4 mt-4">
                         <span class="text-xs text-gray-400 font-mono">CODE: SHOP_03</span>
-                        <span class="text-sm font-bold">LOCKED</span>
+                        <span class="text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">ENTER →</span>
                     </div>
-                </div>
+                </button>
             </div>
         </div>
     </div>
@@ -225,7 +265,19 @@
                     </div>
 
                     <!-- 동적 컨텐츠 (진행중) -->
-                    <div id="visual-content-active" class="hidden text-center text-white z-10 p-8 w-full"></div>
+                    <div id="visual-content-active" class="hidden text-center text-white z-10 p-0 w-full h-full relative">
+                        <!-- 동영상 컨테이너 -->
+                        <div id="video-container" class="hidden absolute inset-0 w-full h-full flex items-center justify-center">
+                            <video id="scenario-video" class="w-full h-full object-cover" autoplay loop muted playsinline>
+                                <source src="d1.mp4" type="video/mp4">
+                                <source src="d1.webm" type="video/webm">
+                                <source src="d1.mov" type="video/quicktime">
+                                동영상을 재생할 수 없습니다.
+                            </video>
+                        </div>
+                        <!-- 텍스트 컨텐츠 (동영상과 함께 표시) -->
+                        <div id="video-text-content" class="hidden absolute inset-0 w-full h-full flex items-end justify-center pointer-events-none"></div>
+                    </div>
 
                     <!-- 동적 컨텐츠 (마지막 결과 화면) -->
                     <div id="visual-content-final" class="hidden text-center text-white z-10 p-8 w-full">
@@ -267,7 +319,8 @@
                                 </div>
                                 <div class="content p-4 border border-gray-200 bg-white hover:border-gray-400 transition-all shadow-sm rounded-sm">
                                     <p class="font-bold text-gray-800 text-sm md:text-base">01. 꿈의 제어: 지각 방지</p>
-                                    <p class="text-xs text-gray-500 mt-1">학교에 지각하는 꿈을 꾸지만 무사히 도착합니다.</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">학교에 지각하는 꿈을 꾸지만 무사히 도착합니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="지각을 방지하기 위한 데이터를 생성합니다.">지각을 방지하기 위한 데이터를 생성합니다.</p>
                                     <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
                                 </div>
                             </div>
@@ -279,7 +332,8 @@
                                 </div>
                                 <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
                                     <p class="font-bold text-gray-800 text-sm md:text-base">02. 신체 제어: 긴장 완화</p>
-                                    <p class="text-xs text-gray-500 mt-1">시험장에서 긴장하지 않고 평온을 유지합니다.</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">시험 당일, 긴장을 하지 않습니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="시험 당일 긴장을 하지 않도록 수면 맥박 상태 데이터를 일정하게 유지시킵니다.">시험 당일 긴장을 하지 않도록 수면 맥박 상태 데이터를 일정하게 유지시킵니다.</p>
                                     <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
                                 </div>
                             </div>
@@ -291,7 +345,8 @@
                                 </div>
                                 <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
                                     <p class="font-bold text-gray-800 text-sm md:text-base">03. 능력 강화: 사과 그리기</p>
-                                    <p class="text-xs text-gray-500 mt-1">누구보다 사과를 완벽하게 묘사합니다.</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">사과 그림을 제일 잘 그립니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="'사과'라는 주제의 시험을 성공시키기 위해 사과 이미지 데이터 500장을 투입합니다.">'사과'라는 주제의 시험을 성공시키기 위해 사과 이미지 데이터 500장을 투입합니다.</p>
                                     <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
                                 </div>
                             </div>
@@ -303,7 +358,8 @@
                                 </div>
                                 <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
                                     <p class="font-bold text-gray-800 text-sm md:text-base">04. 최종 산출: 구도 배치</p>
-                                    <p class="text-xs text-gray-500 mt-1">완벽한 구도로 그림을 완성하여 제출합니다.</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">구도 배치를 제일 잘 합니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="구도에 대한 이전 복습 데이터를 반복합니다.">구도에 대한 이전 복습 데이터를 반복합니다.</p>
                                     <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
                                 </div>
                             </div>
@@ -317,6 +373,276 @@
                             <h3 class="text-2xl font-bold mb-2">설계 완료</h3>
                             <p class="text-gray-600 mb-6 text-sm">합격 시나리오가 성공적으로 시스템에 등록되었습니다.</p>
                             <button onclick="window.showResult()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-sm tracking-wider uppercase transition-colors cursor-pointer">
+                                결과보기
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === PAGE 4: LOVE (시나리오 02 실행) === -->
+    <div id="page-love" class="page hidden flex-col fade-in bg-[#f0f0f0]">
+        <!-- 네비게이션 -->
+        <nav class="px-6 py-4 md:px-8 flex justify-between items-center border-b border-gray-200 bg-white sticky top-0 z-30 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="font-bold text-sm tracking-widest">MODULE 02: RELATIONSHIP</span>
+            </div>
+            <button onclick="window.showPage('started')" class="border border-gray-300 bg-white px-4 py-2 text-xs font-bold hover:bg-gray-100 transition-colors cursor-pointer">ESC (나가기)</button>
+        </nav>
+
+        <div class="flex-1 flex items-center justify-center p-4 md:p-8 overflow-y-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full border border-gray-900 shadow-[10px_10px_0px_0px_rgba(0,0,0,0.1)] bg-white">
+                
+                <!-- 왼쪽: 비주얼 모니터 -->
+                <div id="visual-monitor-love" class="w-full min-h-[300px] lg:h-auto bg-[#111] flex flex-col items-center justify-center relative overflow-hidden border-b lg:border-b-0 lg:border-r border-gray-900 transition-all duration-300">
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#444 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    
+                    <!-- 기본 대기 화면 -->
+                    <div id="visual-content-default-love" class="text-center text-white z-10 p-8 fade-in">
+                        <div class="w-20 h-20 border border-gray-600 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+                            <div class="absolute inset-0 border border-gray-600 rounded-full animate-ping opacity-20"></div>
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 tracking-widest">준비중 입니다</h3>
+                        <p class="text-gray-500 text-xs font-mono">해당 시나리오는 영상 준비 중입니다.</p>
+                    </div>
+
+                    <!-- 동적 컨텐츠 (진행중) -->
+                    <div id="visual-content-active-love" class="hidden text-center text-white z-10 p-8 w-full"></div>
+
+                    <!-- 동적 컨텐츠 (마지막 결과 화면) -->
+                    <div id="visual-content-final-love" class="hidden text-center text-white z-10 p-8 w-full">
+                        <div class="flex flex-col items-center justify-center w-full max-w-xl mx-auto">
+                            <div class="text-6xl mb-6">💕</div>
+                            <h2 class="text-3xl font-bold mb-4 text-green-400 tracking-[0.18em] heading-font">
+                                RELATIONSHIP COMPLETE
+                            </h2>
+                            <p class="text-base md:text-lg text-gray-100 mb-8 leading-relaxed heading-font">
+                                관계 후보 리스트에 등록되었습니다.
+                            </p>
+                            <button
+                                onclick="window.goBackToScenario()"
+                                class="mt-2 px-8 py-3 bg-white text-gray-900 font-bold text-xs tracking-[0.25em] uppercase rounded-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] transition-all cursor-pointer"
+                            >
+                                돌아가기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 체크리스트 -->
+                <div class="w-full flex flex-col bg-white h-full min-h-[500px]">
+                    <div class="bg-gray-50 p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-bold tracking-tight">준비중 입니다</h3>
+                        <p class="text-gray-500 text-xs mt-1 font-mono">사랑 시나리오는 영상 준비 중입니다.</p>
+                    </div>
+
+                    <div id="scenario-list-container-love" class="flex-1 p-8 relative">
+                        <!-- 연결선 -->
+                        <div class="absolute left-[54px] top-8 bottom-8 w-[1px] bg-gray-200 z-0"></div>
+                        <div id="progress-line-love" class="absolute left-[54px] top-8 w-[1px] bg-gray-900 z-0 transition-all duration-500 h-0"></div>
+
+                        <div class="space-y-6 relative z-10">
+                            <!-- 항목 1 -->
+                            <div id="item-love-1" class="scenario-item group relative pl-10 cursor-pointer" onclick="window.handleItemClickLove(1)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-300 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-200 bg-white hover:border-gray-400 transition-all shadow-sm rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">사랑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="사랑 시나리오는 준비 중입니다.">사랑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 2 -->
+                            <div id="item-love-2" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickLove(2)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">사랑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="사랑 시나리오는 준비 중입니다.">사랑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 3 -->
+                            <div id="item-love-3" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickLove(3)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">사랑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="사랑 시나리오는 준비 중입니다.">사랑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 4 -->
+                            <div id="item-love-4" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickLove(4)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">사랑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="사랑 시나리오는 준비 중입니다.">사랑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 완료 팝업 -->
+                    <div id="success-popup-love" class="absolute inset-0 flex items-center justify-center z-50 hidden bg-white/80 backdrop-blur-sm">
+                        <div class="bg-white p-8 border-2 border-gray-900 shadow-[10px_10px_0px_0px_#1a1a1a] max-w-sm mx-4 text-center transform transition-all duration-300 scale-100 opacity-100" id="success-box-love">
+                            <div class="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
+                            <h3 class="text-2xl font-bold mb-2">설계 완료</h3>
+                            <p class="text-gray-600 mb-6 text-sm">관계 시나리오가 성공적으로 시스템에 등록되었습니다.</p>
+                            <button onclick="window.showResultLove()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-sm tracking-wider uppercase transition-colors cursor-pointer">
+                                결과보기
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === PAGE 5: SHOP (시나리오 03 실행) === -->
+    <div id="page-shop" class="page hidden flex-col fade-in bg-[#f0f0f0]">
+        <!-- 네비게이션 -->
+        <nav class="px-6 py-4 md:px-8 flex justify-between items-center border-b border-gray-200 bg-white sticky top-0 z-30 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="font-bold text-sm tracking-widest">MODULE 03: SHOPPING</span>
+            </div>
+            <button onclick="window.showPage('started')" class="border border-gray-300 bg-white px-4 py-2 text-xs font-bold hover:bg-gray-100 transition-colors cursor-pointer">ESC (나가기)</button>
+        </nav>
+
+        <div class="flex-1 flex items-center justify-center p-4 md:p-8 overflow-y-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl w-full border border-gray-900 shadow-[10px_10px_0px_0px_rgba(0,0,0,0.1)] bg-white">
+                
+                <!-- 왼쪽: 비주얼 모니터 -->
+                <div id="visual-monitor-shop" class="w-full min-h-[300px] lg:h-auto bg-[#111] flex flex-col items-center justify-center relative overflow-hidden border-b lg:border-b-0 lg:border-r border-gray-900 transition-all duration-300">
+                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#444 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    
+                    <!-- 기본 대기 화면 -->
+                    <div id="visual-content-default-shop" class="text-center text-white z-10 p-8 fade-in">
+                        <div class="w-20 h-20 border border-gray-600 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+                            <div class="absolute inset-0 border border-gray-600 rounded-full animate-ping opacity-20"></div>
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 tracking-widest">준비중 입니다</h3>
+                        <p class="text-gray-500 text-xs font-mono">해당 시나리오는 영상 준비 중입니다.</p>
+                    </div>
+
+                    <!-- 동적 컨텐츠 (진행중) -->
+                    <div id="visual-content-active-shop" class="hidden text-center text-white z-10 p-8 w-full"></div>
+
+                    <!-- 동적 컨텐츠 (마지막 결과 화면) -->
+                    <div id="visual-content-final-shop" class="hidden text-center text-white z-10 p-8 w-full">
+                        <div class="flex flex-col items-center justify-center w-full max-w-xl mx-auto">
+                            <div class="text-6xl mb-6">🛍️</div>
+                            <h2 class="text-3xl font-bold mb-4 text-green-400 tracking-[0.18em] heading-font">
+                                SHOPPING COMPLETE
+                            </h2>
+                            <p class="text-base md:text-lg text-gray-100 mb-8 leading-relaxed heading-font">
+                                개인 소유 데이터에 등록되었습니다.
+                            </p>
+                            <button
+                                onclick="window.goBackToScenario()"
+                                class="mt-2 px-8 py-3 bg-white text-gray-900 font-bold text-xs tracking-[0.25em] uppercase rounded-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] transition-all cursor-pointer"
+                            >
+                                돌아가기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 체크리스트 -->
+                <div class="w-full flex flex-col bg-white h-full min-h-[500px]">
+                    <div class="bg-gray-50 p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-bold tracking-tight">준비중 입니다</h3>
+                        <p class="text-gray-500 text-xs mt-1 font-mono">쇼핑 시나리오는 영상 준비 중입니다.</p>
+                    </div>
+
+                    <div id="scenario-list-container-shop" class="flex-1 p-8 relative">
+                        <!-- 연결선 -->
+                        <div class="absolute left-[54px] top-8 bottom-8 w-[1px] bg-gray-200 z-0"></div>
+                        <div id="progress-line-shop" class="absolute left-[54px] top-8 w-[1px] bg-gray-900 z-0 transition-all duration-500 h-0"></div>
+
+                        <div class="space-y-6 relative z-10">
+                            <!-- 항목 1 -->
+                            <div id="item-shop-1" class="scenario-item group relative pl-10 cursor-pointer" onclick="window.handleItemClickShop(1)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-300 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-200 bg-white hover:border-gray-400 transition-all shadow-sm rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">쇼핑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="쇼핑 시나리오는 준비 중입니다.">쇼핑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 2 -->
+                            <div id="item-shop-2" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickShop(2)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">쇼핑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="쇼핑 시나리오는 준비 중입니다.">쇼핑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 3 -->
+                            <div id="item-shop-3" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickShop(3)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">쇼핑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="쇼핑 시나리오는 준비 중입니다.">쇼핑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+
+                            <!-- 항목 4 -->
+                            <div id="item-shop-4" class="scenario-item group relative pl-10 cursor-not-allowed opacity-50" onclick="window.handleItemClickShop(4)">
+                                <div class="status-dot absolute left-0 top-1 w-6 h-6 bg-white border-2 border-gray-200 rounded-full z-10 flex items-center justify-center transition-colors">
+                                    <div class="inner-dot w-2 h-2 bg-transparent rounded-full transition-colors"></div>
+                                </div>
+                                <div class="content p-4 border border-gray-100 bg-gray-50 rounded-sm">
+                                    <p class="font-bold text-gray-800 text-sm md:text-base">준비중 입니다</p>
+                                    <p class="text-sm text-gray-800 mt-1 font-medium">쇼핑 시나리오 영상 준비 중입니다.</p>
+                                    <p class="text-xs text-gray-500 mt-1 hidden" data-desc="쇼핑 시나리오는 준비 중입니다.">쇼핑 시나리오는 준비 중입니다.</p>
+                                    <div class="loading-msg hidden mt-3 pt-3 border-t border-gray-100 text-xs font-mono text-blue-600"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 완료 팝업 -->
+                    <div id="success-popup-shop" class="absolute inset-0 flex items-center justify-center z-50 hidden bg-white/80 backdrop-blur-sm">
+                        <div class="bg-white p-8 border-2 border-gray-900 shadow-[10px_10px_0px_0px_#1a1a1a] max-w-sm mx-4 text-center transform transition-all duration-300 scale-100 opacity-100" id="success-box-shop">
+                            <div class="w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
+                            <h3 class="text-2xl font-bold mb-2">설계 완료</h3>
+                            <p class="text-gray-600 mb-6 text-sm">구매 시나리오가 성공적으로 시스템에 등록되었습니다.</p>
+                            <button onclick="window.showResultShop()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-sm tracking-wider uppercase transition-colors cursor-pointer">
                                 결과보기
                             </button>
                         </div>
@@ -360,9 +686,59 @@
             }
         ];
 
+        const visualDataLove = [
+            { // Step 1
+                icon: '<div class="text-6xl mb-4 animate-bounce">📊</div>',
+                title: 'BEHAVIOR DATA',
+                desc: 'INJECTING PAST BEHAVIOR DATA...<br/>GENERATING ACTION PATTERNS'
+            },
+            { // Step 2
+                icon: '<div class="text-6xl mb-4 animate-pulse">💝</div>',
+                title: 'PREFERENCE LOAD',
+                desc: 'LOADING ROMANTIC PREFERENCES...<br/>TARGET PROFILE: CLEAN TYPE'
+            },
+            { // Step 3
+                icon: '<div class="text-6xl mb-4">✨</div>',
+                title: 'IMPRESSION CORRECTION',
+                desc: 'ADJUSTING SPEECH & REACTION...<br/>APPLYING FIRST IMPRESSION DATA'
+            },
+            { // Step 4
+                icon: '<div class="text-6xl mb-4">💕</div>',
+                title: 'RELATIONSHIP SAVE',
+                desc: 'SAVING MUTUAL RECOGNITION...<br/>REGISTERING TO CANDIDATE LIST'
+            }
+        ];
+
+        const visualDataShop = [
+            { // Step 1
+                icon: '<div class="text-6xl mb-4 animate-bounce">👁️</div>',
+                title: 'GAZE REACTION',
+                desc: 'ANALYZING PAST PURCHASE HISTORY...<br/>GENERATING GAZE REACTION DATA'
+            },
+            { // Step 2
+                icon: '<div class="text-6xl mb-4 animate-pulse">💭</div>',
+                title: 'NECESSITY JUDGMENT',
+                desc: 'COMPARING WITH OWNED ITEMS...<br/>GENERATING NECESSITY DATA'
+            },
+            { // Step 3
+                icon: '<div class="text-6xl mb-4">🔍</div>',
+                title: 'OPTION NARROWING',
+                desc: 'ANALYZING PRICE, BRAND, REVIEWS...<br/>REDUCING SELECTION RANGE'
+            },
+            { // Step 4
+                icon: '<div class="text-6xl mb-4">🛍️</div>',
+                title: 'OWNERSHIP SAVE',
+                desc: 'SAVING PURCHASE RESULT...<br/>REGISTERING TO PERSONAL DATA'
+            }
+        ];
+
         let currentIntroStep = 0;
         let completedScenarios = 0;
+        let completedScenariosLove = 0;
+        let completedScenariosShop = 0;
         let isProcessing = false;
+        let isProcessingLove = false;
+        let isProcessingShop = false;
 
         // --- Navigation Functions ---
         window.handleNext = function() {
@@ -397,6 +773,55 @@
                 page.classList.remove('flex');
             });
 
+            // 페이지를 나갈 때 동영상 초기화
+            if (pageId === 'started' || pageId === 'home') {
+                const video = document.getElementById('scenario-video');
+                const videoContainer = document.getElementById('video-container');
+                const videoTextContent = document.getElementById('video-text-content');
+                
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                    video.playbackRate = 1.0;
+                    video.loop = true;
+                    
+                    // 모든 이벤트 리스너 제거를 위해 새 요소로 교체
+                    const newVideo = video.cloneNode(false);
+                    newVideo.id = 'scenario-video';
+                    newVideo.className = 'w-full h-full object-cover';
+                    newVideo.setAttribute('autoplay', '');
+                    newVideo.setAttribute('loop', '');
+                    newVideo.setAttribute('muted', '');
+                    newVideo.setAttribute('playsinline', '');
+                    
+                    // 기본 d1 소스 추가
+                    const sources = [
+                        { src: 'd1.mp4', type: 'video/mp4' },
+                        { src: 'd1.webm', type: 'video/webm' },
+                        { src: 'd1.mov', type: 'video/quicktime' }
+                    ];
+                    
+                    sources.forEach(source => {
+                        const sourceElement = document.createElement('source');
+                        sourceElement.src = source.src;
+                        sourceElement.type = source.type;
+                        newVideo.appendChild(sourceElement);
+                    });
+                    
+                    if (video.parentNode) {
+                        video.parentNode.replaceChild(newVideo, video);
+                    }
+                }
+                
+                if (videoContainer) {
+                    videoContainer.classList.add('hidden');
+                }
+                
+                if (videoTextContent) {
+                    videoTextContent.classList.add('hidden');
+                }
+            }
+
             const target = document.getElementById('page-' + pageId);
             if (target) {
                 target.classList.remove('hidden');
@@ -405,9 +830,17 @@
             }
         };
 
-        window.startScenario = function() {
-            window.showPage('college');
-            initScenarioData();
+        window.startScenario = function(type) {
+            if (type === 'love') {
+                window.showPage('love');
+                initScenarioDataLove();
+            } else if (type === 'shop') {
+                window.showPage('shop');
+                initScenarioDataShop();
+            } else {
+                window.showPage('college');
+                initScenarioData();
+            }
         };
 
         // --- Result Logic ---
@@ -421,9 +854,47 @@
             }, 300);
 
             // 2. 비주얼 모니터에서 최종 결과 화면 표시
-            document.getElementById('visual-content-default').classList.add('hidden');
-            document.getElementById('visual-content-active').classList.add('hidden');
-            document.getElementById('visual-content-final').classList.remove('hidden');
+            const defaultView = document.getElementById('visual-content-default');
+            const activeView = document.getElementById('visual-content-active');
+            const finalView = document.getElementById('visual-content-final');
+            const videoContainer = document.getElementById('video-container');
+            const videoTextContent = document.getElementById('video-text-content');
+            let video = document.getElementById('scenario-video');
+            
+            if (!video) {
+                video = document.querySelector('#video-container video');
+            }
+            
+            // 기본 화면과 최종 화면 숨기기
+            if (defaultView) defaultView.classList.add('hidden');
+            if (finalView) finalView.classList.add('hidden');
+
+            // activeView는 표시 (videoContainer가 그 안에 있으므로)
+            if (activeView) activeView.classList.remove('hidden');
+
+            // 동영상 컨테이너 표시
+            if (videoContainer) {
+                videoContainer.classList.remove('hidden');
+            }
+
+            // 동영상 위에 합격 문구 표시 (상단에 배치)
+            if (videoTextContent) {
+                videoTextContent.classList.remove('hidden');
+                videoTextContent.innerHTML = `
+                    <div class="absolute inset-x-0 top-8 flex justify-center">
+                        <div class="text-center px-8 py-6 bg-black/50 rounded-lg">
+                            <p class="text-2xl md:text-3xl font-bold text-white tracking-wider">
+                                계원예술대학교에 합격하였습니다.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // yes1 동영상 재생
+            if (video) {
+                playVideo(video, 'yes1', true);
+            }
         };
 
         // 결과 화면에서 시나리오 선택으로 돌아가기
@@ -468,7 +939,9 @@
                     content.classList.add('border-gray-900', 'shadow-md', 'bg-white');
                     
                     loading.classList.remove('hidden');
-                    loading.innerHTML = '<span class="text-green-600 font-bold">✓ Data Injected.</span>';
+                    const descElement = content.querySelector('[data-desc]');
+                    const descText = descElement ? descElement.getAttribute('data-desc') : 'Data Injected.';
+                    loading.innerHTML = '<span class="text-green-600 font-bold">✓ ' + descText + '</span>';
 
                 } else if (i === completedScenarios + 1) {
                     // [상태 2: 활성 (다음 클릭 대상)]
@@ -524,16 +997,32 @@
             const content = item.querySelector('.content');
 
             loading.classList.remove('hidden');
-            loading.innerHTML = '> processing... <span class="animate-pulse">|||</span>';
+            const descElement = content.querySelector('[data-desc]');
+            const descText = descElement ? descElement.getAttribute('data-desc') : 'processing...';
+            
+            // 점 애니메이션 (GPT 스타일) - 즉시 시작
+            let dotCount = 0;
+            const updateDots = () => {
+                dotCount = (dotCount % 3) + 1;
+                const dots = '.'.repeat(dotCount);
+                loading.innerHTML = '<span class="text-blue-600">' + descText + ' ' + dots + '</span>';
+            };
+            updateDots(); // 즉시 한 번 실행
+            const dotsInterval = setInterval(updateDots, 500);
+            item.dataset.dotsInterval = dotsInterval.toString();
             
             dot.classList.remove('border-gray-400');
             dot.classList.add('border-blue-500', 'animate-pulse');
             content.classList.add('border-blue-400');
 
-            // Visual Panel 업데이트 (로딩)
-            updateVisualPanel(id, true);
-
-            setTimeout(() => {
+            // Visual Panel 업데이트 (로딩) - 동영상 재생 시작
+            updateVisualPanel(id, true, () => {
+                // 동영상이 끝나면 실행되는 콜백
+                // 점 애니메이션 정리
+                if (item.dataset.dotsInterval) {
+                    clearInterval(parseInt(item.dataset.dotsInterval));
+                }
+                
                 // 데이터 처리 완료
                 completedScenarios++;
                 
@@ -554,39 +1043,414 @@
                 }
 
                 isProcessing = false;
-            }, 1500);
+            });
         };
 
-        function updateVisualPanel(stepId, isLoading) {
+        // 전역 동영상 재생 함수 (하나로 통합)
+        function playVideo(videoEl, name, loop = false, onEnd = null) {
+            if (!videoEl) {
+                console.log('[VIDEO] 동영상 요소가 없습니다:', name);
+                if (onEnd) {
+                    setTimeout(onEnd, 1000);
+                }
+                return;
+            }
+            
+            videoEl.pause();
+            videoEl.currentTime = 0;
+            
+            // 기존 source 요소 제거
+            while (videoEl.firstChild) {
+                videoEl.removeChild(videoEl.firstChild);
+            }
+            
+            // 새로운 source 요소 추가 (mp4와 webm 둘 다)
+            const sources = [
+                { src: `${name}.mp4`, type: 'video/mp4' },
+                { src: `${name}.webm`, type: 'video/webm' }
+            ];
+            
+            sources.forEach(source => {
+                const sourceElement = document.createElement('source');
+                sourceElement.src = source.src;
+                sourceElement.type = source.type;
+                videoEl.appendChild(sourceElement);
+            });
+            
+            // loop 속성 설정
+            videoEl.loop = loop;
+            videoEl.muted = true;
+            videoEl.playsInline = true;
+            
+            // 디버깅 이벤트 추가
+            videoEl.addEventListener('error', () => {
+                console.log('[VIDEO ERROR]', videoEl.error, '파일명:', name);
+            });
+            videoEl.addEventListener('stalled', () => console.log('[VIDEO] stalled:', name));
+            videoEl.addEventListener('waiting', () => console.log('[VIDEO] waiting:', name));
+            videoEl.addEventListener('loadeddata', () => console.log('[VIDEO] loadeddata:', name));
+            videoEl.addEventListener('canplay', () => console.log('[VIDEO] canplay:', name));
+            videoEl.addEventListener('playing', () => console.log('[VIDEO] playing:', name));
+            
+            // 동영상 로드
+            videoEl.load();
+            
+            // 동영상이 끝나면 콜백 실행 (loop가 false일 때만)
+            if (!loop && onEnd) {
+                let endCallbackCalled = false;
+
+                const handleEnd = () => {
+                    if (endCallbackCalled) return;
+                    endCallbackCalled = true;
+                    onEnd();
+                };
+
+                videoEl.addEventListener('ended', handleEnd, { once: true });
+
+                // 안전장치: 10초 후에도 ended가 안 오면 콜백 실행 (타임아웃)
+                setTimeout(() => {
+                    if (!endCallbackCalled && (videoEl.ended || videoEl.paused)) {
+                        console.log('[VIDEO TIMEOUT] ended 이벤트가 발생하지 않아 타임아웃으로 콜백 실행:', name);
+                        handleEnd();
+                    }
+                }, 10000);
+            }
+            
+            // 동영상 메타데이터 로드 후 재생
+            const tryPlay = () => {
+                if (videoEl.readyState >= 2) {
+                    videoEl.play().then(() => {
+                        console.log(`[VIDEO] 재생 성공: ${name}`);
+                    }).catch(e => {
+                        console.log('[VIDEO PLAY FAIL]', name, e);
+                    });
+                }
+            };
+            
+            if (videoEl.readyState >= 2) {
+                tryPlay();
+            } else {
+                videoEl.addEventListener('loadedmetadata', tryPlay, { once: true });
+                videoEl.addEventListener('loadeddata', tryPlay, { once: true });
+                videoEl.addEventListener('canplay', tryPlay, { once: true });
+                videoEl.addEventListener('canplaythrough', tryPlay, { once: true });
+            }
+            
+            // 즉시 시도 (약간의 지연 후)
+            setTimeout(() => {
+                if (videoEl.readyState >= 2) {
+                    tryPlay();
+                }
+            }, 200);
+        }
+
+        function updateVisualPanel(stepId, isLoading, onVideoEnd) {
             const defaultView = document.getElementById('visual-content-default');
             const activeView = document.getElementById('visual-content-active');
+            const videoContainer = document.getElementById('video-container');
+            const videoTextContent = document.getElementById('video-text-content');
+            // 동영상 요소를 매번 다시 찾기 (시나리오 재진입 시 새로 생성된 요소를 찾기 위해)
+            let video = document.getElementById('scenario-video');
+            // 동영상 요소가 없으면 다시 찾기
+            if (!video) {
+                video = document.querySelector('#video-container video');
+            }
             
             if (isLoading) {
                 defaultView.classList.add('hidden');
                 activeView.classList.remove('hidden');
                 
                 const data = visualData[stepId - 1];
-                activeView.innerHTML = `
-                    <div class="flex flex-col items-center animate-pulse">
-                        ${data.icon}
-                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-green-400">${data.title}</h2>
-                        <div class="h-[1px] w-12 bg-gray-600 my-4"></div>
-                        <p class="text-gray-300 text-xs font-mono leading-relaxed uppercase">${data.desc}</p>
-                        <div class="mt-8 text-xs font-mono text-green-500">>>> PROCESSING DATA...</div>
-                    </div>
-                `;
+                
+                // 대학교 시나리오일 때만 동영상 표시
+                const currentScenario = getCurrentScenario();
+                if (currentScenario === 'college') {
+                    // 동영상만 표시 (텍스트 오버레이 제거)
+                    if (videoContainer) {
+                        videoContainer.classList.remove('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden'); // 텍스트 숨김
+                    }
+                    
+                    // 동영상 재생 (전역 playVideo 함수 사용)
+                    if (video) {
+                        // 단계별 처리 중 동영상 재생
+                        if (stepId === 1) {
+                            // 1단계: d1 재생 (loop 없음) 끝나면 onVideoEnd 실행
+                            playVideo(video, 'd1', false, onVideoEnd);
+                        } else if (stepId === 2) {
+                            // 2단계: d111 재생 (loop 없음)
+                            playVideo(video, 'd111', false, onVideoEnd);
+                        } else if (stepId === 3) {
+                            // 3단계: d3 재생 (loop 없음)
+                            playVideo(video, 'd3', false, onVideoEnd);
+                        } else {
+                            // 4단계: d44 재생 (loop 없음)
+                            playVideo(video, 'd44', false, onVideoEnd);
+                        }
+                    } else {
+                        console.log('동영상 요소를 찾을 수 없습니다!');
+                        // 동영상이 없으면 바로 콜백 실행
+                        if (onVideoEnd) {
+                            setTimeout(onVideoEnd, 4000);
+                        }
+                    }
+                } else {
+                    // 다른 시나리오는 기존 방식
+                    if (videoContainer) {
+                        videoContainer.classList.add('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden');
+                    }
+                    if (activeView) {
+                        activeView.innerHTML = `
+                        <div class="flex flex-col items-center animate-pulse">
+                            ${data.icon}
+                            <h2 class="text-2xl font-bold mb-2 tracking-widest text-green-400">${data.title}</h2>
+                            <div class="h-[1px] w-12 bg-gray-600 my-4"></div>
+                            <p class="text-gray-300 text-xs font-mono leading-relaxed uppercase">${data.desc}</p>
+                            <div class="mt-8 text-xs font-mono text-green-500">>>> PROCESSING DATA...</div>
+                        </div>
+                    `;
+                    }
+                    // 다른 시나리오는 일정 시간 후 콜백 실행
+                    if (onVideoEnd) {
+                        setTimeout(onVideoEnd, 1500);
+                    }
+                }
             } else {
+                // 처리 완료 시
+                const currentScenario = getCurrentScenario();
                 const data = visualData[stepId - 1];
-                activeView.innerHTML = `
-                    <div class="flex flex-col items-center">
-                        ${data.icon}
-                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-white">${data.title}</h2>
-                        <div class="h-[1px] w-12 bg-white my-4"></div>
-                        <p class="text-gray-400 text-xs font-mono leading-relaxed uppercase">MODULE COMPLETED.</p>
-                        <div class="mt-8 text-xs font-mono text-white">WAITING FOR NEXT INPUT...</div>
-                    </div>
-                `;
+                
+                // 동영상 요소를 다시 찾기 (완료 시에도 동영상 요소가 있을 수 있음)
+                // videoContainer를 먼저 표시한 후 동영상 요소 찾기
+                if (videoContainer) {
+                    videoContainer.classList.remove('hidden');
+                }
+                
+                let videoForComplete = document.getElementById('scenario-video');
+                if (!videoForComplete) {
+                    videoForComplete = document.querySelector('#video-container video');
+                }
+                // 여전히 없으면 videoContainer 내부에서 다시 찾기
+                if (!videoForComplete && videoContainer) {
+                    videoForComplete = videoContainer.querySelector('video');
+                }
+                // 그래도 없으면 새로 생성
+                if (!videoForComplete && videoContainer) {
+                    const newVideo = document.createElement('video');
+                    newVideo.id = 'scenario-video';
+                    newVideo.className = 'w-full h-full object-cover';
+                    newVideo.setAttribute('autoplay', '');
+                    newVideo.setAttribute('muted', '');
+                    newVideo.setAttribute('playsinline', '');
+                    videoContainer.appendChild(newVideo);
+                    videoForComplete = newVideo;
+                }
+                
+                // 대학교 시나리오의 1단계 완료 시 d11 영상 재생
+                if (currentScenario === 'college' && stepId === 1) {
+                    if (videoContainer) {
+                        videoContainer.classList.remove('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden');
+                    }
+                    
+                    if (videoForComplete) {
+                        // d11 영상으로 전환 (loop 없음 - 한 번만 재생)
+                        playVideo(videoForComplete, 'd11', false);
+                    }
+                } else if (currentScenario === 'college' && stepId === 2) {
+                    // 대학교 시나리오의 2단계 완료 시 d111이 끝나면 d2로 전환
+                    console.log('2단계 완료 - d111이 끝나면 d2로 전환');
+                    
+                    // videoContainer 먼저 표시
+                    if (videoContainer) {
+                        videoContainer.classList.remove('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden');
+                    }
+                    
+                    // videoForComplete가 없으면 다시 찾기
+                    if (!videoForComplete) {
+                        videoForComplete = document.getElementById('scenario-video');
+                    }
+                    if (!videoForComplete && videoContainer) {
+                        videoForComplete = videoContainer.querySelector('video');
+                    }
+
+                    if (videoForComplete) {
+                        // d111 영상이 끝나면 d2로 전환 (전역 playVideo 함수 사용)
+                        const handleD111End = () => {
+                            console.log('d111 영상 종료 - d2로 전환');
+                            
+                            // 동영상 요소 다시 찾기
+                            let videoEl = document.getElementById('scenario-video');
+                            if (!videoEl) {
+                                videoEl = document.querySelector('#video-container video');
+                            }
+                            
+                            // videoContainer가 숨겨져 있으면 표시
+                            if (videoContainer) {
+                                videoContainer.classList.remove('hidden');
+                            }
+                            if (videoTextContent) {
+                                videoTextContent.classList.add('hidden');
+                            }
+                            
+                            if (videoEl) {
+                                // d2 영상으로 전환 (loop 활성화) - 전역 playVideo 함수 사용
+                                playVideo(videoEl, 'd2', true);
+                            }
+                        };
+                        
+                        // d111 영상이 끝나면 d2로 전환 (ended 이벤트만 사용, paused 체크 제거)
+                        if (videoForComplete.ended) {
+                            // d111이 이미 끝났으면 바로 d2로 전환
+                            handleD111End();
+                        } else {
+                            // d111이 재생 중이면 끝날 때까지 대기 (ended 이벤트만 사용)
+                            videoForComplete.addEventListener('ended', handleD111End, { once: true });
+                        }
+                    } else {
+                        console.log('2단계: 동영상 요소를 찾을 수 없습니다');
+                    }
+                } else if (currentScenario === 'college' && stepId === 3) {
+                    // 대학교 시나리오의 3단계 완료 시 d3이 끝나면 d33로 전환
+                    console.log('3단계 완료 - d3이 끝나면 d33로 전환');
+                    
+                    // videoContainer 먼저 표시
+                    if (videoContainer) {
+                        videoContainer.classList.remove('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden');
+                    }
+                    
+                    // videoForComplete가 없으면 다시 찾기
+                    if (!videoForComplete) {
+                        videoForComplete = document.getElementById('scenario-video');
+                    }
+                    if (!videoForComplete && videoContainer) {
+                        videoForComplete = videoContainer.querySelector('video');
+                    }
+
+                    if (videoForComplete) {
+                        // d3 영상이 끝나면 d33로 전환 (전역 playVideo 함수 사용)
+                        const handleD3End = () => {
+                            console.log('d3 영상 종료 - d33로 전환');
+                            
+                            // 동영상 요소 다시 찾기
+                            let videoEl = document.getElementById('scenario-video');
+                            if (!videoEl) {
+                                videoEl = document.querySelector('#video-container video');
+                            }
+                            
+                            // videoContainer가 숨겨져 있으면 표시
+                            if (videoContainer) {
+                                videoContainer.classList.remove('hidden');
+                            }
+                            if (videoTextContent) {
+                                videoTextContent.classList.add('hidden');
+                            }
+                            
+                            if (videoEl) {
+                                // d33 영상으로 전환 (loop 활성화) - 전역 playVideo 함수 사용
+                                playVideo(videoEl, 'd33', true);
+                            }
+                        };
+                        
+                        // d3 영상이 끝나면 d33로 전환 (ended 이벤트만 사용, paused 체크 제거)
+                        if (videoForComplete.ended) {
+                            // d3이 이미 끝났으면 바로 d33로 전환
+                            handleD3End();
+                        } else {
+                            // d3이 재생 중이면 끝날 때까지 대기 (ended 이벤트만 사용)
+                            videoForComplete.addEventListener('ended', handleD3End, { once: true });
+                        }
+                    } else {
+                        console.log('3단계: 동영상 요소를 찾을 수 없습니다');
+                    }
+                } else if (currentScenario === 'college' && stepId === 4) {
+                    // 대학교 시나리오의 4단계 완료 시 d44 영상 재생
+                    console.log('4단계 완료 - d44 영상 재생 시작');
+                    
+                    // videoContainer 먼저 표시
+                    if (videoContainer) {
+                        videoContainer.classList.remove('hidden');
+                    }
+                    if (videoTextContent) {
+                        videoTextContent.classList.add('hidden');
+                    }
+                    
+                    // videoForComplete가 없으면 다시 찾기
+                    if (!videoForComplete) {
+                        videoForComplete = document.getElementById('scenario-video');
+                    }
+                    if (!videoForComplete && videoContainer) {
+                        videoForComplete = videoContainer.querySelector('video');
+                    }
+
+                    if (videoForComplete) {
+                        // 4단계 완료 시 d4 재생 (loop 없음 - 한 번만 재생)
+                        console.log('4단계 완료 - d4 영상 재생');
+
+                        const showResultPopup = () => {
+                            console.log('d4 영상 종료 - 결과보기 팝업 표시 (2초 후)');
+                            // 2초 딜레이 후 팝업 표시
+                            setTimeout(() => {
+                                const popup = document.getElementById('success-popup');
+                                const box = document.getElementById('success-box');
+                                if (popup) popup.classList.remove('hidden');
+                                if (box) {
+                                    box.classList.remove('popup-active');
+                                    setTimeout(() => box.classList.add('popup-active'), 10);
+                                }
+                            }, 2000);
+                        };
+
+                        playVideo(videoForComplete, 'd4', false, showResultPopup);
+                    } else {
+                        console.log('4단계: 동영상 요소를 찾을 수 없습니다');
+                    }
+                } else {
+                    // 다른 경우는 기존 방식
+                    if (video) {
+                        video.pause();
+                    }
+                    videoContainer.classList.add('hidden');
+                    videoTextContent.classList.add('hidden');
+                    
+                    activeView.innerHTML = `
+                        <div class="flex flex-col items-center">
+                            ${data.icon}
+                            <h2 class="text-2xl font-bold mb-2 tracking-widest text-white">${data.title}</h2>
+                            <div class="h-[1px] w-12 bg-white my-4"></div>
+                            <p class="text-gray-400 text-xs font-mono leading-relaxed uppercase">MODULE COMPLETED.</p>
+                            <div class="mt-8 text-xs font-mono text-white">WAITING FOR NEXT INPUT...</div>
+                        </div>
+                    `;
+                }
             }
+        }
+        
+        function getCurrentScenario() {
+            // 현재 활성화된 페이지를 확인하여 시나리오 반환
+            if (!document.getElementById('page-college').classList.contains('hidden')) {
+                return 'college';
+            }
+            if (!document.getElementById('page-love').classList.contains('hidden')) {
+                return 'love';
+            }
+            if (!document.getElementById('page-shop').classList.contains('hidden')) {
+                return 'shop';
+            }
+            return null;
         }
 
         // --- Helper Functions ---
@@ -638,7 +1502,445 @@
             if (popup) popup.classList.add('hidden');
             if (box) box.classList.remove('popup-active');
 
+            // 동영상 완전 초기화
+            const video = document.getElementById('scenario-video');
+            const videoContainer = document.getElementById('video-container');
+            const videoTextContent = document.getElementById('video-text-content');
+            
+            if (video) {
+                // 동영상 완전히 정지 및 리셋
+                video.pause();
+                video.currentTime = 0;
+                video.playbackRate = 1.0;
+                video.loop = true;
+                
+                // 모든 이벤트 리스너 제거를 위해 새 요소로 교체
+                const newVideo = video.cloneNode(false);
+                newVideo.id = 'scenario-video';
+                newVideo.className = 'w-full h-full object-cover';
+                newVideo.setAttribute('autoplay', '');
+                newVideo.setAttribute('loop', '');
+                newVideo.setAttribute('muted', '');
+                newVideo.setAttribute('playsinline', '');
+                
+                // 기본 d1 소스 추가
+                const sources = [
+                    { src: 'd1.mp4', type: 'video/mp4' },
+                    { src: 'd1.webm', type: 'video/webm' },
+                    { src: 'd1.mov', type: 'video/quicktime' }
+                ];
+                
+                sources.forEach(source => {
+                    const sourceElement = document.createElement('source');
+                    sourceElement.src = source.src;
+                    sourceElement.type = source.type;
+                    newVideo.appendChild(sourceElement);
+                });
+                
+                if (video.parentNode) {
+                    video.parentNode.replaceChild(newVideo, video);
+                }
+            }
+            
+            if (videoContainer) {
+                videoContainer.classList.add('hidden');
+            }
+            
+            if (videoTextContent) {
+                videoTextContent.classList.add('hidden');
+            }
+
             renderScenarioItems();
+        }
+
+        // --- 시나리오 02 (사랑의 시작) Logic ---
+        function renderScenarioItemsLove() {
+            for (let i = 1; i <= 4; i++) {
+                const item = document.getElementById('item-love-' + i);
+                if (!item) continue;
+
+                const dot = item.querySelector('.status-dot');
+                const content = item.querySelector('.content');
+                const innerDot = item.querySelector('.inner-dot');
+                const loading = item.querySelector('.loading-msg');
+
+                if (!dot || !content || !innerDot || !loading) {
+                    console.error('Missing elements in item-love-' + i);
+                    continue;
+                }
+
+                // 공통 리셋
+                item.classList.remove('opacity-50', 'cursor-not-allowed', 'cursor-pointer');
+                dot.classList.remove('bg-gray-900', 'border-gray-900', 'border-blue-500', 'animate-pulse', 'border-gray-200', 'border-gray-300', 'border-gray-400');
+                dot.classList.add('bg-white'); 
+                content.classList.remove('border-blue-400', 'hover:border-gray-400', 'border-gray-900', 'shadow-md', 'bg-gray-50', 'bg-white');
+                innerDot.classList.remove('bg-white', 'bg-transparent');
+
+                if (i <= completedScenariosLove) {
+                    // [상태 1: 완료됨]
+                    item.classList.add('cursor-pointer');
+                    
+                    dot.classList.remove('bg-white');
+                    dot.classList.add('bg-gray-900', 'border-gray-900');
+                    innerDot.classList.add('bg-white');
+
+                    content.classList.add('border-gray-900', 'shadow-md', 'bg-white');
+                    
+                    loading.classList.remove('hidden');
+                    const descElement = content.querySelector('[data-desc]');
+                    const descText = descElement ? descElement.getAttribute('data-desc') : 'Data Injected.';
+                    loading.innerHTML = '<span class="text-green-600 font-bold">✓ ' + descText + '</span>';
+
+                } else if (i === completedScenariosLove + 1) {
+                    // [상태 2: 활성 (다음 클릭 대상)]
+                    item.classList.add('cursor-pointer');
+
+                    dot.classList.add('border-gray-400', 'border-2');
+                    innerDot.classList.add('bg-transparent');
+
+                    content.classList.add('bg-white', 'hover:border-gray-400', 'border-gray-200');
+                    
+                    loading.classList.add('hidden');
+
+                } else {
+                    // [상태 3: 잠김]
+                    item.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    dot.classList.add('border-gray-200', 'border-2');
+                    innerDot.classList.add('bg-transparent');
+
+                    content.classList.add('bg-gray-50', 'border-gray-100');
+
+                    loading.classList.add('hidden');
+                }
+            }
+
+            // 연결선 업데이트
+            const progressLine = document.getElementById('progress-line-love');
+            if (progressLine) {
+                const percent = (completedScenariosLove / 4) * 100;
+                progressLine.style.height = percent + '%';
+            }
+        }
+
+        window.handleItemClickLove = function(id) {
+            if (isProcessingLove) return;
+            if (id !== completedScenariosLove + 1) {
+                if (id > completedScenariosLove + 1) {
+                    const item = document.getElementById('item-love-' + id);
+                    item.classList.add('animate-pulse');
+                    setTimeout(() => item.classList.remove('animate-pulse'), 500);
+                }
+                return;
+            }
+
+            isProcessingLove = true;
+            
+            const item = document.getElementById('item-love-' + id);
+            const dot = item.querySelector('.status-dot');
+            const loading = item.querySelector('.loading-msg');
+            const content = item.querySelector('.content');
+
+            loading.classList.remove('hidden');
+            const descElement = content.querySelector('[data-desc]');
+            const descText = descElement ? descElement.getAttribute('data-desc') : 'processing...';
+            
+            // 점 애니메이션 (GPT 스타일) - 즉시 시작
+            let dotCount = 0;
+            const updateDots = () => {
+                dotCount = (dotCount % 3) + 1;
+                const dots = '.'.repeat(dotCount);
+                loading.innerHTML = '<span class="text-blue-600">' + descText + ' ' + dots + '</span>';
+            };
+            updateDots(); // 즉시 한 번 실행
+            const dotsInterval = setInterval(updateDots, 500);
+            item.dataset.dotsInterval = dotsInterval.toString();
+            
+            dot.classList.remove('border-gray-400');
+            dot.classList.add('border-blue-500', 'animate-pulse');
+            content.classList.add('border-blue-400');
+
+            updateVisualPanelLove(id, true);
+
+            setTimeout(() => {
+                // 점 애니메이션 정리
+                if (item.dataset.dotsInterval) {
+                    clearInterval(parseInt(item.dataset.dotsInterval));
+                }
+                
+                completedScenariosLove++;
+                
+                renderScenarioItemsLove();
+                
+                updateVisualPanelLove(id, false);
+
+                if (completedScenariosLove === 4) {
+                    setTimeout(() => {
+                        const popup = document.getElementById('success-popup-love');
+                        const box = document.getElementById('success-box-love');
+                        if (popup) popup.classList.remove('hidden');
+                        if (box) setTimeout(() => box.classList.add('popup-active'), 50);
+                    }, 800);
+                }
+
+                isProcessingLove = false;
+            }, 4000); // 로딩 시간을 4초로 증가
+        };
+
+        function updateVisualPanelLove(stepId, isLoading) {
+            const defaultView = document.getElementById('visual-content-default-love');
+            const activeView = document.getElementById('visual-content-active-love');
+            
+            if (isLoading) {
+                defaultView.classList.add('hidden');
+                activeView.classList.remove('hidden');
+                
+                const data = visualDataLove[stepId - 1];
+                activeView.innerHTML = `
+                    <div class="flex flex-col items-center animate-pulse">
+                        ${data.icon}
+                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-green-400">${data.title}</h2>
+                        <div class="h-[1px] w-12 bg-gray-600 my-4"></div>
+                        <p class="text-gray-300 text-xs font-mono leading-relaxed uppercase">${data.desc}</p>
+                        <div class="mt-8 text-xs font-mono text-green-500">>>> PROCESSING DATA...</div>
+                    </div>
+                `;
+            } else {
+                const data = visualDataLove[stepId - 1];
+                activeView.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        ${data.icon}
+                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-white">${data.title}</h2>
+                        <div class="h-[1px] w-12 bg-white my-4"></div>
+                        <p class="text-gray-400 text-xs font-mono leading-relaxed uppercase">MODULE COMPLETED.</p>
+                        <div class="mt-8 text-xs font-mono text-white">WAITING FOR NEXT INPUT...</div>
+                    </div>
+                `;
+            }
+        }
+
+        window.showResultLove = function() {
+            const popup = document.getElementById('success-popup-love');
+            const box = document.getElementById('success-box-love');
+            if (box) box.classList.remove('popup-active');
+            setTimeout(() => {
+                if (popup) popup.classList.add('hidden');
+            }, 300);
+
+            document.getElementById('visual-content-default-love').classList.add('hidden');
+            document.getElementById('visual-content-active-love').classList.add('hidden');
+            document.getElementById('visual-content-final-love').classList.remove('hidden');
+        };
+
+        function initScenarioDataLove() {
+            completedScenariosLove = 0;
+            isProcessingLove = false;
+            
+            document.getElementById('visual-content-default-love').classList.remove('hidden');
+            document.getElementById('visual-content-active-love').classList.add('hidden');
+            document.getElementById('visual-content-final-love').classList.add('hidden');
+
+            const popup = document.getElementById('success-popup-love');
+            const box = document.getElementById('success-box-love');
+            if (popup) popup.classList.add('hidden');
+            if (box) box.classList.remove('popup-active');
+
+            renderScenarioItemsLove();
+        }
+
+        // --- 시나리오 03 (쇼핑 & 소유) Logic ---
+        function renderScenarioItemsShop() {
+            for (let i = 1; i <= 4; i++) {
+                const item = document.getElementById('item-shop-' + i);
+                if (!item) continue;
+
+                const dot = item.querySelector('.status-dot');
+                const content = item.querySelector('.content');
+                const innerDot = item.querySelector('.inner-dot');
+                const loading = item.querySelector('.loading-msg');
+
+                if (!dot || !content || !innerDot || !loading) {
+                    console.error('Missing elements in item-shop-' + i);
+                    continue;
+                }
+
+                // 공통 리셋
+                item.classList.remove('opacity-50', 'cursor-not-allowed', 'cursor-pointer');
+                dot.classList.remove('bg-gray-900', 'border-gray-900', 'border-blue-500', 'animate-pulse', 'border-gray-200', 'border-gray-300', 'border-gray-400');
+                dot.classList.add('bg-white'); 
+                content.classList.remove('border-blue-400', 'hover:border-gray-400', 'border-gray-900', 'shadow-md', 'bg-gray-50', 'bg-white');
+                innerDot.classList.remove('bg-white', 'bg-transparent');
+
+                if (i <= completedScenariosShop) {
+                    // [상태 1: 완료됨]
+                    item.classList.add('cursor-pointer');
+                    
+                    dot.classList.remove('bg-white');
+                    dot.classList.add('bg-gray-900', 'border-gray-900');
+                    innerDot.classList.add('bg-white');
+
+                    content.classList.add('border-gray-900', 'shadow-md', 'bg-white');
+                    
+                    loading.classList.remove('hidden');
+                    const descElement = content.querySelector('[data-desc]');
+                    const descText = descElement ? descElement.getAttribute('data-desc') : 'Data Injected.';
+                    loading.innerHTML = '<span class="text-green-600 font-bold">✓ ' + descText + '</span>';
+
+                } else if (i === completedScenariosShop + 1) {
+                    // [상태 2: 활성 (다음 클릭 대상)]
+                    item.classList.add('cursor-pointer');
+
+                    dot.classList.add('border-gray-400', 'border-2');
+                    innerDot.classList.add('bg-transparent');
+
+                    content.classList.add('bg-white', 'hover:border-gray-400', 'border-gray-200');
+                    
+                    loading.classList.add('hidden');
+
+                } else {
+                    // [상태 3: 잠김]
+                    item.classList.add('opacity-50', 'cursor-not-allowed');
+                    
+                    dot.classList.add('border-gray-200', 'border-2');
+                    innerDot.classList.add('bg-transparent');
+
+                    content.classList.add('bg-gray-50', 'border-gray-100');
+
+                    loading.classList.add('hidden');
+                }
+            }
+
+            // 연결선 업데이트
+            const progressLine = document.getElementById('progress-line-shop');
+            if (progressLine) {
+                const percent = (completedScenariosShop / 4) * 100;
+                progressLine.style.height = percent + '%';
+            }
+        }
+
+        window.handleItemClickShop = function(id) {
+            if (isProcessingShop) return;
+            if (id !== completedScenariosShop + 1) {
+                if (id > completedScenariosShop + 1) {
+                    const item = document.getElementById('item-shop-' + id);
+                    item.classList.add('animate-pulse');
+                    setTimeout(() => item.classList.remove('animate-pulse'), 500);
+                }
+                return;
+            }
+
+            isProcessingShop = true;
+            
+            const item = document.getElementById('item-shop-' + id);
+            const dot = item.querySelector('.status-dot');
+            const loading = item.querySelector('.loading-msg');
+            const content = item.querySelector('.content');
+
+            loading.classList.remove('hidden');
+            const descElement = content.querySelector('[data-desc]');
+            const descText = descElement ? descElement.getAttribute('data-desc') : 'processing...';
+            
+            // 점 애니메이션 (GPT 스타일) - 즉시 시작
+            let dotCount = 0;
+            const updateDots = () => {
+                dotCount = (dotCount % 3) + 1;
+                const dots = '.'.repeat(dotCount);
+                loading.innerHTML = '<span class="text-blue-600">' + descText + ' ' + dots + '</span>';
+            };
+            updateDots(); // 즉시 한 번 실행
+            const dotsInterval = setInterval(updateDots, 500);
+            item.dataset.dotsInterval = dotsInterval.toString();
+            
+            dot.classList.remove('border-gray-400');
+            dot.classList.add('border-blue-500', 'animate-pulse');
+            content.classList.add('border-blue-400');
+
+            updateVisualPanelShop(id, true);
+
+            setTimeout(() => {
+                // 점 애니메이션 정리
+                if (item.dataset.dotsInterval) {
+                    clearInterval(parseInt(item.dataset.dotsInterval));
+                }
+                
+                completedScenariosShop++;
+                
+                renderScenarioItemsShop();
+                
+                updateVisualPanelShop(id, false);
+
+                if (completedScenariosShop === 4) {
+                    setTimeout(() => {
+                        const popup = document.getElementById('success-popup-shop');
+                        const box = document.getElementById('success-box-shop');
+                        if (popup) popup.classList.remove('hidden');
+                        if (box) setTimeout(() => box.classList.add('popup-active'), 50);
+                    }, 800);
+                }
+
+                isProcessingShop = false;
+            }, 4000); // 로딩 시간을 4초로 증가
+        };
+
+        function updateVisualPanelShop(stepId, isLoading) {
+            const defaultView = document.getElementById('visual-content-default-shop');
+            const activeView = document.getElementById('visual-content-active-shop');
+            
+            if (isLoading) {
+                defaultView.classList.add('hidden');
+                activeView.classList.remove('hidden');
+                
+                const data = visualDataShop[stepId - 1];
+                activeView.innerHTML = `
+                    <div class="flex flex-col items-center animate-pulse">
+                        ${data.icon}
+                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-green-400">${data.title}</h2>
+                        <div class="h-[1px] w-12 bg-gray-600 my-4"></div>
+                        <p class="text-gray-300 text-xs font-mono leading-relaxed uppercase">${data.desc}</p>
+                        <div class="mt-8 text-xs font-mono text-green-500">>>> PROCESSING DATA...</div>
+                    </div>
+                `;
+            } else {
+                const data = visualDataShop[stepId - 1];
+                activeView.innerHTML = `
+                    <div class="flex flex-col items-center">
+                        ${data.icon}
+                        <h2 class="text-2xl font-bold mb-2 tracking-widest text-white">${data.title}</h2>
+                        <div class="h-[1px] w-12 bg-white my-4"></div>
+                        <p class="text-gray-400 text-xs font-mono leading-relaxed uppercase">MODULE COMPLETED.</p>
+                        <div class="mt-8 text-xs font-mono text-white">WAITING FOR NEXT INPUT...</div>
+                    </div>
+                `;
+            }
+        }
+
+        window.showResultShop = function() {
+            const popup = document.getElementById('success-popup-shop');
+            const box = document.getElementById('success-box-shop');
+            if (box) box.classList.remove('popup-active');
+            setTimeout(() => {
+                if (popup) popup.classList.add('hidden');
+            }, 300);
+
+            document.getElementById('visual-content-default-shop').classList.add('hidden');
+            document.getElementById('visual-content-active-shop').classList.add('hidden');
+            document.getElementById('visual-content-final-shop').classList.remove('hidden');
+        };
+
+        function initScenarioDataShop() {
+            completedScenariosShop = 0;
+            isProcessingShop = false;
+            
+            document.getElementById('visual-content-default-shop').classList.remove('hidden');
+            document.getElementById('visual-content-active-shop').classList.add('hidden');
+            document.getElementById('visual-content-final-shop').classList.add('hidden');
+
+            const popup = document.getElementById('success-popup-shop');
+            const box = document.getElementById('success-box-shop');
+            if (popup) popup.classList.add('hidden');
+            if (box) box.classList.remove('popup-active');
+
+            renderScenarioItemsShop();
         }
 
         // --- Init ---
